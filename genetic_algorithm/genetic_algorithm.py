@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from genetic_algorithm.crossover import CrossOver
+from genetic_algorithm.mutation import Mutation
 n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 # TODO everything is terribly coded
@@ -8,7 +9,7 @@ n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 class GeneticAlgorithm:
     def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1, crossover_method="single_point",
-                 prob_mutation=0.3, prob_translation=0.1, prob_swap=0.1, reproduction_rate=0.2):
+                 mutation=True, prob_mutation=0.3, prob_translation=0.1, prob_swap=0.1, reproduction_rate=0.2):
 
         self.pop_size = pop_size
         self.number_gen = number_gen
@@ -23,6 +24,7 @@ class GeneticAlgorithm:
     def initialize_population(self):
         pass
 
+    # TODO CrossOver and Mutation should be defined in the __init__ and then we just call them (?)
     def crossover(self, parent_1, parent_2):
         child = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
 
@@ -33,9 +35,9 @@ class GeneticAlgorithm:
         mutation, changing 1 into 0 and the other way around,
         to add more randomness
         """
-        flag = np.random.rand(*child.shape) <= self.prob_mutation
-        ind = np.argwhere(flag)
-        # look at how to perform mutation with multiple non-binary arguments
+        mutated_child = Mutation(self.crossover_method).perform_mutation(child)
+
+        return mutated_child
 
     def translation(self, c1):
         """

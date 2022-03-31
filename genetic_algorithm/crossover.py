@@ -17,7 +17,7 @@ class CrossOver:
         elif self.crossover_method == "uniform":
             child = self._uniform_crossover(parent_1, parent_2)
         else:
-            raise ValueError("the method selected has not been implemented")
+            raise ValueError("the crossover method selected has not been implemented")
 
         return child
 
