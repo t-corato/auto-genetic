@@ -1,55 +1,41 @@
 import random
 import numpy as np
+from genetic_algorithm.crossover import CrossOver
 n_factors = 84  # retrieve from size of dataset (to deprecate)
 
-# TODO everything is terrible coded
+# TODO everything is terribly coded
 
 
 class GeneticAlgorithm:
-    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1, prob_mutation=0.3,
-                 prob_translation=0.1, prob_swap=0.1, reproduction_rate=0.2):
+    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1, crossover_method="single_point",
+                 prob_mutation=0.3, prob_translation=0.1, prob_swap=0.1, reproduction_rate=0.2):
 
         self.pop_size = pop_size
         self.number_gen = number_gen
         self.min_value = min_value
         self.prob_crossover = prob_crossover
+        self.crossover_method = crossover_method
         self.prob_mutation = prob_mutation
         self.prob_translation = prob_translation
         self.prob_swap = prob_swap
         self.reproduction_rate = reproduction_rate
 
-    def crossover(self, p1, p2):
+    def initialize_population(self):
+        pass
 
-        """
-        middle point crossover with a random splitpoint
-        """
+    def crossover(self, parent_1, parent_2):
+        child = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
 
-        # converting the string to list for performing the crossover
-        l = list(p1)
-        q = list(p2)
+        return child
 
-        # generating the random number to perform crossover
-        k = random.randint(0, len(l))
-
-        # interchanging the genes
-        for i in range(k, len(l)):
-            l[i], q[i] = q[i], l[i]
-
-        return np.array(l), np.array(q)
-
-    def mutation(self, c1):
+    def mutation(self, child):
         """
         mutation, changing 1 into 0 and the other way around,
         to add more randomness
         """
-        flag = np.random.rand(*c1.shape) <= self.prob_mutation
+        flag = np.random.rand(*child.shape) <= self.prob_mutation
         ind = np.argwhere(flag)
-        for i in ind:
-            if c1[i] == 0:
-                c1[i] = 1
-            else:
-                c1[i] = 0
-        return c1
+        # look at how to perform mutation with multiple non-binary arguments
 
     def translation(self, c1):
         """
@@ -149,8 +135,7 @@ class GeneticAlgorithm:
         scores = np.array(scores)
         return pop, scores
 
-    def GA(self, X_train, X_test, y_train, y_test, dropout=0.2, kernel_size=2, batch_size=512, epochs=2, verbose=0,
-           p_mutation=0.3, p_translation=0.3, p_swap=0.3, rep_rate=0.2, pop=100, gen=20, n_factors=84):
+    def GA(self, pop=100, gen=20, n_factors=84):
 
         """
         run the genetic algorithm for n generation with m genes, storing the best score and the best gene
