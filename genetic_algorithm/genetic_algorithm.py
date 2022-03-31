@@ -50,18 +50,6 @@ class GeneticAlgorithm:
             c1 = np.array(c1)
         return c1
 
-    def swap(self, c1):
-        """
-        swaps the n element of a gene with the n+1
-        """
-        c1 = list(c1)
-        for i in range(len(c1) - 1):
-            sw = np.random.rand(1)
-            if sw < self.prob_swap:
-                c1[i], c1[i + 1] = c1[i + 1], c1[i]
-        c1 = np.array(c1)
-        return c1
-
     def roulette_wheel_selection(self, p):
         """
         selection of a parents using their score
