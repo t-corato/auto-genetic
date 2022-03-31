@@ -8,8 +8,9 @@ n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 
 class GeneticAlgorithm:
-    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1, crossover_method="single_point",
-                 mutation=True, prob_mutation=0.3, prob_translation=0.1, prob_swap=0.1, reproduction_rate=0.2):
+    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1,
+                 crossover_method="single_point_split", mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
+                 prob_translation=0.1, reproduction_rate=0.2):
 
         self.pop_size = pop_size
         self.number_gen = number_gen
@@ -18,8 +19,9 @@ class GeneticAlgorithm:
         self.crossover_method = crossover_method
         self.prob_mutation = prob_mutation
         self.prob_translation = prob_translation
-        self.prob_swap = prob_swap
         self.reproduction_rate = reproduction_rate
+        self.mutation = mutation
+        self.mutation_method = mutation_method
 
     def initialize_population(self):
         pass
