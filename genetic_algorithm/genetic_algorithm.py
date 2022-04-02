@@ -22,22 +22,24 @@ class GeneticAlgorithm:
         self.reproduction_rate = reproduction_rate
         self.mutation = mutation
         self.mutation_method = mutation_method
+        self.hyperparams_values = None
 
     def initialize_population(self):
         pass
 
     # TODO CrossOver and Mutation should be defined in the __init__ and then we just call them (?)
     def crossover(self, parent_1, parent_2):
-        child = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
+        child1, child2 = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
 
-        return child
+        return child1, child2
 
     def mutation(self, child):
         """
         mutation, changing 1 into 0 and the other way around,
         to add more randomness
         """
-        mutated_child = Mutation(self.crossover_method).perform_mutation(child)
+        mutated_child = Mutation(self.crossover_method, self.hyperparams_values,
+                                 self.prob_mutation).perform_mutation(child)
 
         return mutated_child
 
