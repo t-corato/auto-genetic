@@ -1,15 +1,15 @@
 import numpy as np
 
 
-class Traslation:
-    def __init__(self, prob_traslation):
-        self.prob_traslation = prob_traslation
+class Translation:
+    def __init__(self, prob_translation):
+        self.prob_translation = prob_translation
 
-    def perform_traslation(self, gene):
+    def perform_translation(self, gene):
         prob = np.random.rand()
-        mutated_gene = gene.copy()
-        if prob <= self.prob_traslation:
+        translated_gene = gene.deepcopy()
+        if prob <= self.prob_translation:
             num_traslated = np.random.randint(0, len(gene))
-            mutated_gene = np.hstack([mutated_gene[-num_traslated:], mutated_gene[:-num_traslated]])
+            translated_gene = np.hstack([translated_gene[-num_traslated:], translated_gene[:-num_traslated]])
 
-        return mutated_gene
+        return translated_gene

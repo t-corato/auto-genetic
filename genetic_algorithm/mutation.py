@@ -38,7 +38,7 @@ class Mutation:
     def _bit_flip_mutation(self, gene: np.array) -> np.array:
         to_be_mutated = np.random.rand(*gene.shape) <= self.prob_mutation
         mutation_index = np.argwhere(to_be_mutated)
-        mutated_gene = gene.copy()
+        mutated_gene = gene.deepcopy()
 
         for i in mutation_index:
             if mutated_gene[i] == 0:
@@ -51,7 +51,7 @@ class Mutation:
     def _random_resetting_mutation(self, gene: np.array) -> np.array:
         to_be_mutated = np.random.rand(*gene.shape) <= self.prob_mutation
         mutation_index = np.argwhere(to_be_mutated)
-        mutated_gene = gene.copy()
+        mutated_gene = gene.deepcopy()
 
         for i in mutation_index:
             mutated_gene[i] = random.choice(self.hyperparams_values[i])
@@ -64,7 +64,7 @@ class Mutation:
         if swapped_index % 2 == 1:
             swapped_index = np.random.choice(swapped_index, size=len(swapped_index)-1, replace=False)
 
-        mutated_gene = gene.copy()
+        mutated_gene = gene.deepcopy()
 
         for i in range(0, len(swapped_index), 2):
             mutated_gene[swapped_index[i]], mutated_gene[swapped_index[i + 1]] = \
@@ -74,7 +74,7 @@ class Mutation:
 
     def _scramble_mutation(self, gene: np.array) -> np.array:
         prob = np.random.rand()
-        mutated_child = gene.copy()
+        mutated_child = gene.deepcopy()
         if prob <= self.prob_mutation:
             index_1 = random.randint(0, len(gene))
             index_2 = random.randint(index_1, len(gene))
@@ -86,7 +86,7 @@ class Mutation:
 
     def _inversion_mutation(self, gene: np.array) -> np.array:
         prob = np.random.rand()
-        mutated_child = gene.copy()
+        mutated_child = gene.deepcopy()
         if prob <= self.prob_mutation:
             index_1 = random.randint(0, len(gene))
             index_2 = random.randint(index_1, len(gene))
