@@ -46,7 +46,7 @@ class CrossOver:
     @staticmethod
     def _uniform_crossover(parent_1: np.array, parent_2: np.array) -> tuple[np.array, np.array]:
         index_prob = np.random.rand(len(parent_1))
-        child1, child2 = parent_1.copy(), parent_2.copy()
+        child1, child2 = parent_1.deepcopy(), parent_2.deepcopy()
         for i in range(len(index_prob)):
             if index_prob[i] <= 0.5:
                 child1[i], child2[i] = child2[i], child1[i]

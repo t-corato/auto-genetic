@@ -2,6 +2,7 @@ import random
 import numpy as np
 from genetic_algorithm.crossover import CrossOver
 from genetic_algorithm.mutation import Mutation
+from genetic_algorithm.translation import Translation
 n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 # TODO everything is terribly coded
@@ -43,16 +44,13 @@ class GeneticAlgorithm:
 
         return mutated_child
 
-    def translation(self, c1):
+    def translation(self, child):
         """
         translate all the element of a gene by one
         """
-        trans = np.random.rand(1)
-        if trans < self.prob_translation:
-            c1 = list(c1)
-            c1.insert(0, c1.pop())
-            c1 = np.array(c1)
-        return c1
+        translated_child = Translation(self.prob_translation).perform_translation(child)
+
+        return translated_child
 
     def roulette_wheel_selection(self, p):
         """
