@@ -4,19 +4,19 @@ from genetic_algorithm.crossover import CrossOver
 from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.translation import Translation
 from genetic_algorithm.selection import Selection
-n_factors = 84  # retrieve from size of dataset (to deprecate)
-
-# TODO everything is terribly coded
 
 
 class GeneticAlgorithm:
-    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1,
-                 crossover_method="single_point_split", perform_mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
-                 prob_translation=0.1, reproduction_rate=0.2, selection_method: str = "roulette_wheel"):
+    def __init__(self, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
+                 min_fitness_value: float = None, prob_crossover: int = 1, crossover_method: str = "single_point_split",
+                 perform_mutation: bool = True, mutation_method: str = "bit_flip", prob_mutation: float = 0.3,
+                 prob_translation: float = 0.1, reproduction_rate: float = 0.2,
+                 selection_method: str = "roulette_wheel", tournament_size: int = 4):
 
+        self.algo_type = algo_type
         self.pop_size = pop_size
         self.number_gen = number_gen
-        self.min_value = min_value
+        self.min_fitness_value = min_fitness_value
         self.prob_crossover = prob_crossover
         self.crossover_method = crossover_method
         self.prob_mutation = prob_mutation
@@ -28,9 +28,17 @@ class GeneticAlgorithm:
         self.population = None
         self.selection_method = selection_method
         self.best_gene = None
+        self.tournament_size = tournament_size
+        self.evaluation_function = None
 
     def initialize_population(self):
-        pass
+        if self.algo_type == "hyperparameter_tuning":
+            pass
+        elif self.algo_type == "feature_selection":
+            pass
+        else:
+            raise ValueError('the only algo_type acceptable are "hyperparameter_tuning" and "feature_selection"'
+                             'please select one of the 2')
 
     # TODO CrossOver and Mutation should be defined in the __init__ and then we just call them (?)
     def crossover(self, parent_1, parent_2):
@@ -56,15 +64,33 @@ class GeneticAlgorithm:
 
         return translated_child
 
-    def selection(self, tournament_size: int = None):
+    def selection(self):
         """
         selection of a parents using their score
         """
         parents = Selection(self.selection_method, self.population,
-                            self.reproduction_rate).perform_selection(tournament_size=tournament_size)
+                            self.reproduction_rate).perform_selection(tournament_size=self.tournament_size)
 
         return parents
 
+    def reproduction(self):
+        """
+        create a generation starting form the previous one, using roulette wheel selection and random choice to select the parents
+        """
+        parents = self.selection()
+        children = []
+
+        for i in range(0, len(parents), 2):
+            parent_1, parent_2 = parents[i], parents[i + 1]
+            child_1, child_2 = self.crossover(parent_1, parent_2)
+            child_1, child_2 = self.mutation(child_1), self.mutation(child_2)
+            child_1, child_2 = self.translation(child_1), self.translation(child_2)
+            children.append(child_1)
+            children.append(child_2)
+        children = np.array(children)
+        return children
+
+######################################################################################
     # TODO implement params select and feature select proper
     def feature_select(self, X, gene):
         """
@@ -76,6 +102,9 @@ class GeneticAlgorithm:
                 feature_index.append(i)
         df_filter = X[:, feature_index]
         return df_filter
+
+    def set_evaluation_function(self, evaluation_function):
+        self.evaluation_function = evaluation_function
 
     def evaluate(self):
         """
@@ -99,23 +128,6 @@ class GeneticAlgorithm:
                 best_set = pop[i]
         scores = np.array(scores)
         return scores, best_score, best_set
-
-    def reproduction(self, tournament_size):
-        """
-        create a generation starting form the previous one, using roulette wheel selection and random choice to select the parents
-        """
-        parents = self.selection(tournament_size=tournament_size)
-        children = []
-
-        for i in range(0, len(parents), 2):
-            parent_1, parent_2 = parents[i], parents[i + 1]
-            child_1, child_2 = self.crossover(parent_1, parent_2)
-            child_1, child_2 = self.mutation(child_1), self.mutation(child_2)
-            child_1, child_2 = self.translation(child_1), self.translation(child_2)
-            children.append(child_1)
-            children.append(child_2)
-        children = np.array(children)
-        return children
 
     def darwin(self, pop, scores):
         """
