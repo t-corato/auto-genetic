@@ -80,6 +80,9 @@ class Selection:
     def _rank_selection(self):
         parents = sorted(self.population, key=lambda gene: gene.fitness, reverse=True)
         best_parents = parents[:self.n_parents]
+
+        random.shuffle(best_parents)
+
         return np.array(best_parents)
 
     def _random_selection(self):
