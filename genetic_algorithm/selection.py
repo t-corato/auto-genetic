@@ -26,6 +26,8 @@ class Selection:
             raise ValueError("The selection method specified is not implemented \n"
                              "Please specify a valid selection method ")
 
+        return parents
+
     def _roulette_wheel_selection(self):
         all_parents = []
         while len(all_parents) < self.n_parents:

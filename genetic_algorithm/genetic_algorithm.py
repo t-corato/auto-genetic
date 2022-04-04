@@ -3,6 +3,7 @@ import numpy as np
 from genetic_algorithm.crossover import CrossOver
 from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.translation import Translation
+from genetic_algorithm.selection import Selection
 n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 # TODO everything is terribly coded
@@ -11,7 +12,7 @@ n_factors = 84  # retrieve from size of dataset (to deprecate)
 class GeneticAlgorithm:
     def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1,
                  crossover_method="single_point_split", mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
-                 prob_translation=0.1, reproduction_rate=0.2):
+                 prob_translation=0.1, reproduction_rate=0.2, selection_method: str = "roulette_wheel"):
 
         self.pop_size = pop_size
         self.number_gen = number_gen
@@ -24,6 +25,8 @@ class GeneticAlgorithm:
         self.mutation = mutation
         self.mutation_method = mutation_method
         self.hyperparams_values = None
+        self.population = None
+        self.selection_method = selection_method
 
     def initialize_population(self):
         pass
@@ -52,14 +55,14 @@ class GeneticAlgorithm:
 
         return translated_child
 
-    def roulette_wheel_selection(self, p):
+    def selection(self, tournament_size: int = None):
         """
         selection of a parents using their score
         """
-        c = np.cumsum(p)
-        r = sum(p) * np.random.rand()
-        ind = np.argwhere(r <= c)
-        return ind[0][0]
+        parents = Selection(self.selection_method, self.population,
+                            self.reproduction_rate).perform_selection(tournament_size=tournament_size)
+
+        return parents
 
     # TODO implement params select and feature select proper
     def feature_select(self, X, gene):
