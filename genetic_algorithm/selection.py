@@ -32,16 +32,16 @@ class Selection:
         all_parents = []
         while len(all_parents) < self.n_parents:
 
-            population_fitness = sum([chromosome.fitness() for chromosome in self.population])
+            population_fitness = sum([chromosome.fitness for chromosome in self.population])
 
-            chromosome_probabilities = [chromosome.fitness() / population_fitness for chromosome in self.population]
+            chromosome_probabilities = [chromosome.fitness / population_fitness for chromosome in self.population]
 
             all_parents.append(np.random.choice(self.population, p=chromosome_probabilities))
 
         return np.array(all_parents)
 
     def _stochastic_universal_sampling(self):
-        total_fitness = sum([chromosome.fitness() for chromosome in self.population])
+        total_fitness = sum([chromosome.fitness for chromosome in self.population])
         point_distance = total_fitness / self.n_parents
         start_point = random.uniform(0, point_distance)
         points = [start_point + i * point_distance for i in range(self.n_parents)]
@@ -64,7 +64,7 @@ class Selection:
         i = 0
 
         while i <= gene_num:
-            subset_sum += self.population[i].fitness()
+            subset_sum += self.population[i].fitness
             i += 1
         return subset_sum
 
@@ -72,13 +72,13 @@ class Selection:
         all_parents = []
         while len(all_parents) < self.n_parents:
             parents = random.choices(self.population, k=tournament_size)
-            parents = sorted(parents, key=lambda gene: gene.fitness(), reverse=True)
+            parents = sorted(parents, key=lambda gene: gene.fitness, reverse=True)
             all_parents.append(parents[0])
 
         return np.array(all_parents)
 
     def _rank_selection(self):
-        parents = sorted(self.population, key=lambda gene: gene.fitness(), reverse=True)
+        parents = sorted(self.population, key=lambda gene: gene.fitness, reverse=True)
         best_parents = parents[:self.n_parents]
         return np.array(best_parents)
 

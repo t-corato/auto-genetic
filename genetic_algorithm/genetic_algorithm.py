@@ -27,6 +27,7 @@ class GeneticAlgorithm:
         self.hyperparams_values = None
         self.population = None
         self.selection_method = selection_method
+        self.best_gene = None
 
     def initialize_population(self):
         pass

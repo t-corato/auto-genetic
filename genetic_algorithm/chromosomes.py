@@ -3,10 +3,13 @@ import numpy as np
 
 class Chromosome:
     def __init__(self, n_hyperparams, hyperparams_values):
-        pass
+        self.fitness = None
 
     def initialise(self):
         raise NotImplementedError()
 
     def fitness(self):
-        raise NotImplementedError()
+        if self.fitness:
+            return self.fitness
+        else:
+            raise NotImplementedError()
