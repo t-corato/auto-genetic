@@ -1,77 +1,88 @@
-import random
 import numpy as np
-from genetic_algorithm.crossover import CrossOver
-from genetic_algorithm.mutation import Mutation
-from genetic_algorithm.translation import Translation
-n_factors = 84  # retrieve from size of dataset (to deprecate)
-
-# TODO everything is terribly coded
+from genetic_algorithm.reproduction.reproduction import Reproduction
 
 
 class GeneticAlgorithm:
-    def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1,
-                 crossover_method="single_point_split", mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
-                 prob_translation=0.1, reproduction_rate=0.2):
+    def __init__(self, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
+                 min_fitness_value: float = None, prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
+                 mutation_method: str = "bit_flip", prob_mutation: float = 0.3,
+                 prob_translation: float = 0.1, reproduction_rate: float = 0.2,
+                 selection_method: str = "roulette_wheel", tournament_size: int = 4):
 
+        self.algo_type = algo_type
         self.pop_size = pop_size
         self.number_gen = number_gen
-        self.min_value = min_value
+        self.min_fitness_value = min_fitness_value
         self.prob_crossover = prob_crossover
         self.crossover_method = crossover_method
         self.prob_mutation = prob_mutation
         self.prob_translation = prob_translation
         self.reproduction_rate = reproduction_rate
-        self.mutation = mutation
         self.mutation_method = mutation_method
+        self.hyperparams_names = None
         self.hyperparams_values = None
+        self.hyperparams_types = None
+        self.population = None
+        self.selection_method = selection_method
+        self.best_gene = None
+        self.tournament_size = tournament_size
+        self.evaluation_function = None
 
     def initialize_population(self):
-        pass
+        if self.algo_type == "hyperparameter_tuning":
+            pass
+        elif self.algo_type == "feature_selection":
+            pass
+        else:
+            raise ValueError('the only algo_type acceptable are "hyperparameter_tuning" and "feature_selection"'
+                             'please select one of the 2')
 
-    # TODO CrossOver and Mutation should be defined in the __init__ and then we just call them (?)
-    def crossover(self, parent_1, parent_2):
-        child1, child2 = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
+    def get_hyperparameters(self, hyperparams_dict):
+        if self.algo_type == "hyperparameter_tuning":
+            self.hyperparams_names = hyperparams_dict[0].keys()
+            self.hyperparams_values = hyperparams_dict[1]
+            self.hyperparams_types = hyperparams_dict[0]
 
-        return child1, child2
+        else:
+            raise ValueError("If the algo_type is not hyperparameter_tuning, you should not need this method")
 
-    def mutation(self, child):
-        """
-        mutation, changing 1 into 0 and the other way around,
-        to add more randomness
-        """
-        mutated_child = Mutation(self.crossover_method, self.hyperparams_values,
-                                 self.prob_mutation).perform_mutation(child)
+    def reproduction(self):
 
-        return mutated_child
+        rep_function = Reproduction(population=self.population, crossover_method=self.crossover_method,
+                                    prob_crossover=self.prob_crossover, hyperparams_values=self.hyperparams_values,
+                                    prob_mutation=self.prob_mutation, prob_translation=self.prob_translation,
+                                    selection_method=self.selection_method, reproduction_rate=self.reproduction_rate,
+                                    tournament_size=self.tournament_size)
+        children = rep_function.reproduction()
 
-    def translation(self, child):
-        """
-        translate all the element of a gene by one
-        """
-        translated_child = Translation(self.prob_translation).perform_translation(child)
+        return children
 
-        return translated_child
+    def set_evaluation_function(self, evaluation_function):
+        self.evaluation_function = evaluation_function
 
-    def roulette_wheel_selection(self, p):
-        """
-        selection of a parents using their score
-        """
-        c = np.cumsum(p)
-        r = sum(p) * np.random.rand()
-        ind = np.argwhere(r <= c)
-        return ind[0][0]
-
+######################################################################################
+    # TODO move this block to an Evaluate function so we can just call the evaluation
     # TODO implement params select and feature select proper
-    def feature_select(self, X, gene):
+
+    def feature_selection(self, data, gene):
         """
         deactivate the columns of the dataframe where the gene is 0
         """
-        feature_index = []
-        for i in range(len(gene)):
-            if gene[i] == 1:
-                feature_index.append(i)
-        df_filter = X[:, feature_index]
+        filter = np.argwhere(gene == 1)
+        df_filter = data.iloc[:, filter.flatten()]
         return df_filter
+
+    def parameter_select(self, gene):
+        selected_params = {}
+        i = 0
+        while i < len(gene):
+            for key, value in self.hyperparams_values.items():
+                selected_params[key] = value[gene[i]]
+            i += 1
+
+        return selected_params
+
+
 
     def evaluate(self):
         """
@@ -95,24 +106,7 @@ class GeneticAlgorithm:
                 best_set = pop[i]
         scores = np.array(scores)
         return scores, best_score, best_set
-
-    def reproduction(self, pop, scores):
-        """
-        create a generation starting form the previous one, using roulette wheel selection and random choice to select the parents
-        """
-        children = []
-        for _ in range(int(len(pop) * self.reproduction_rate / 2)):
-            p_1 = pop[self.roulette_wheel_selection(scores)]
-            p_2 = pop[self.roulette_wheel_selection(scores)]
-            c_1, c_2 = self.crossover(p_1, p_2)
-            c_1, c_2 = self.mutation(c_1), self.mutation(c_2)
-            c_1, c_2 = self.translation(c_1), self.translation(c_2)
-            c_1, c_2 = self.swap(c_1), self.swap(c_2)
-            children.append(c_1)
-            children.append(c_2)
-        children = np.array(children)
-        return children
-
+######################################################################
     def darwin(self, pop, scores):
         """
         removes the worst elements from a population, to make space for the children
