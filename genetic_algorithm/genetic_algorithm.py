@@ -11,7 +11,7 @@ n_factors = 84  # retrieve from size of dataset (to deprecate)
 
 class GeneticAlgorithm:
     def __init__(self, pop_size=100, number_gen=20, min_value=None, prob_crossover=1,
-                 crossover_method="single_point_split", mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
+                 crossover_method="single_point_split", perform_mutation=True, mutation_method="bit_flip", prob_mutation=0.3,
                  prob_translation=0.1, reproduction_rate=0.2, selection_method: str = "roulette_wheel"):
 
         self.pop_size = pop_size
@@ -22,7 +22,7 @@ class GeneticAlgorithm:
         self.prob_mutation = prob_mutation
         self.prob_translation = prob_translation
         self.reproduction_rate = reproduction_rate
-        self.mutation = mutation
+        self.perform_mutation = perform_mutation
         self.mutation_method = mutation_method
         self.hyperparams_values = None
         self.population = None
@@ -99,20 +99,20 @@ class GeneticAlgorithm:
         scores = np.array(scores)
         return scores, best_score, best_set
 
-    def reproduction(self, pop, scores):
+    def reproduction(self, tournament_size):
         """
         create a generation starting form the previous one, using roulette wheel selection and random choice to select the parents
         """
+        parents = self.selection(tournament_size=tournament_size)
         children = []
-        for _ in range(int(len(pop) * self.reproduction_rate / 2)):
-            p_1 = pop[self.roulette_wheel_selection(scores)]
-            p_2 = pop[self.roulette_wheel_selection(scores)]
-            c_1, c_2 = self.crossover(p_1, p_2)
-            c_1, c_2 = self.mutation(c_1), self.mutation(c_2)
-            c_1, c_2 = self.translation(c_1), self.translation(c_2)
-            c_1, c_2 = self.swap(c_1), self.swap(c_2)
-            children.append(c_1)
-            children.append(c_2)
+
+        for i in range(0, len(parents), 2):
+            parent_1, parent_2 = parents[i], parents[i + 1]
+            child_1, child_2 = self.crossover(parent_1, parent_2)
+            child_1, child_2 = self.mutation(child_1), self.mutation(child_2)
+            child_1, child_2 = self.translation(child_1), self.translation(child_2)
+            children.append(child_1)
+            children.append(child_2)
         children = np.array(children)
         return children
 
