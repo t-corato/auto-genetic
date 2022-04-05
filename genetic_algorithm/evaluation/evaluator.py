@@ -35,23 +35,7 @@ class Evaluator:
                              "implement your own by choosing custom")
 
 
-    def feature_selection(self, data, gene):
-        """
-        deactivate the columns of the dataframe where the gene is 0
-        """
-        filter = np.argwhere(gene == 1)
-        df_filter = data.iloc[:, filter.flatten()]
-        return df_filter
 
-    def parameter_select(self, gene):
-        selected_params = {}
-        i = 0
-        while i < len(gene):
-            for key, value in self.hyperparams_values.items():
-                selected_params[key] = value[gene[i]]
-            i += 1
-
-        return selected_params
 
     def evaluate(self):
         """
