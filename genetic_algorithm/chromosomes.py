@@ -15,9 +15,14 @@ class Chromosome:
             raise NotImplementedError()
 
 
-class Population:
+class Population(list):
     def __init__(self, n_chromosomes, n_hyperparams, hyperparams_values, features):
+        super().__init__()
         pass
 
     def initialise_pop(self):
         raise NotImplementedError()
+
+    def delete_worst(self):
+        raise NotImplementedError()
+
