@@ -2,27 +2,19 @@ import numpy as np
 
 
 class Chromosome:
-    def __init__(self, n_hyperparams, hyperparams_values, features):
+    def __init__(self, n_hyperparams: int = None, hyperparams_values: dict = None, features: list = None):
         self.fitness = None
+        self.fitness_function = None
 
     def initialise(self):
         raise NotImplementedError()
 
-    def fitness(self):
+    def set_fitness_function(self, fitness_function_initialised):
+        self.fitness_function = fitness_function_initialised
+
+    def calculate_fitness(self):
         if self.fitness:
             return self.fitness
         else:
-            raise NotImplementedError()
-
-
-class Population(list):
-    def __init__(self, n_chromosomes, n_hyperparams, hyperparams_values, features):
-        super().__init__()
-        pass
-
-    def initialise_pop(self):
-        raise NotImplementedError()
-
-    def delete_worst(self):
-        raise NotImplementedError()
+            self.fitness = self.fitness_function.calculate_fitness()
 
