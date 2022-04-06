@@ -34,3 +34,12 @@ class FitnessFuncSetter:
             raise ValueError("The selected evaluation method is not available, choose one of the available ones or "
                              "implement your own by choosing custom")
 
+        return self
+
+    def get_fitness_func(self):
+        if self.fitness_func:
+            return self.fitness_func
+
+        else:
+            raise ValueError("The fitness function has not been defined")
+

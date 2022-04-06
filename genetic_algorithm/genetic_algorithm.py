@@ -1,9 +1,10 @@
 import numpy as np
 from genetic_algorithm.reproduction.reproduction import Reproduction
+from genetic_algorithm.evaluation.evaluator import Evaluator
 
 
 class GeneticAlgorithm:
-    def __init__(self, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
+    def __init__(self, program, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
                  min_fitness_value: float = None, prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
                  mutation_method: str = "bit_flip", prob_mutation: float = 0.3,
                  prob_translation: float = 0.1, reproduction_rate: float = 0.2,
@@ -26,7 +27,12 @@ class GeneticAlgorithm:
         self.selection_method = selection_method
         self.best_gene = None
         self.tournament_size = tournament_size
-        self.evaluation_function = None
+        self.evaluation_method = None
+        self.program = program
+        self.target = target_column
+        self.train_data = None
+        self.test_data = None
+        self.custom_fitness_function = None
 
     def initialize_population(self):
         if self.algo_type == "hyperparameter_tuning":
@@ -57,20 +63,22 @@ class GeneticAlgorithm:
 
         return children
 
-    def set_evaluation_function(self, evaluation_function):
-        self.evaluation_function = evaluation_function
+    def set_evaluation_method(self, evaluation_method, custom_fitness_function=None):
 
-######################################################################################
-    # TODO move this block to an Evaluate function so we can just call the evaluation
-    # TODO implement params select and feature select proper
+        if self.evaluation_method == "custom" and custom_fitness_function is None:
+            raise ValueError("To use a ")
 
-    def evaluate(self):
-        """
-        evaluate a cromosome using the TCN
-        """
+        self.evaluation_method = evaluation_method
+        self.custom_fitness_function = custom_fitness_function
 
-        raise NotImplementedError()
-######################################################################
+    def evaluate_generation(self):
+        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.train_data, self.test_data,
+                              self.target, self.custom_fitness_function)
+
+        evaluator.evaluate_generation()
+
+################################################################################################################
+
     def darwin(self, pop, scores):
         """
         removes the worst elements from a population, to make space for the children
