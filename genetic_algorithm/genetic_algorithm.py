@@ -1,9 +1,10 @@
 import numpy as np
 from genetic_algorithm.reproduction.reproduction import Reproduction
+from genetic_algorithm.evaluation.evaluator import Evaluator
 
 
 class GeneticAlgorithm:
-    def __init__(self, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
+    def __init__(self, program, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
                  min_fitness_value: float = None, prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
                  mutation_method: str = "bit_flip", prob_mutation: float = 0.3,
                  prob_translation: float = 0.1, reproduction_rate: float = 0.2,
@@ -26,7 +27,12 @@ class GeneticAlgorithm:
         self.selection_method = selection_method
         self.best_gene = None
         self.tournament_size = tournament_size
-        self.evaluation_function = None
+        self.evaluation_method = None
+        self.program = program
+        self.target = target_column
+        self.train_data = None
+        self.test_data = None
+        self.custom_fitness_function = None
 
     def initialize_population(self):
         if self.algo_type == "hyperparameter_tuning":
@@ -57,56 +63,22 @@ class GeneticAlgorithm:
 
         return children
 
-    def set_evaluation_function(self, evaluation_function):
-        self.evaluation_function = evaluation_function
+    def set_evaluation_method(self, evaluation_method, custom_fitness_function=None):
 
-######################################################################################
-    # TODO move this block to an Evaluate function so we can just call the evaluation
-    # TODO implement params select and feature select proper
+        if self.evaluation_method == "custom" and custom_fitness_function is None:
+            raise ValueError("To use a ")
 
-    def feature_selection(self, data, gene):
-        """
-        deactivate the columns of the dataframe where the gene is 0
-        """
-        filter = np.argwhere(gene == 1)
-        df_filter = data.iloc[:, filter.flatten()]
-        return df_filter
+        self.evaluation_method = evaluation_method
+        self.custom_fitness_function = custom_fitness_function
 
-    def parameter_select(self, gene):
-        selected_params = {}
-        i = 0
-        while i < len(gene):
-            for key, value in self.hyperparams_values.items():
-                selected_params[key] = value[gene[i]]
-            i += 1
+    def evaluate_generation(self):
+        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.train_data, self.test_data,
+                              self.target, self.custom_fitness_function)
 
-        return selected_params
+        evaluator.evaluate_generation()
 
+################################################################################################################
 
-
-    def evaluate(self):
-        """
-        evaluate a cromosome using the TCN
-        """
-
-        raise NotImplementedError()
-
-    def generation_eval(self, pop):
-        """
-        evaluate all the scores of a generation, returns all the scores, the best score and the gene that gave the best score
-        """
-        scores = []
-        best_score = 0
-        best_set = []
-        for i in range(len(pop)):
-            score = self.evaluate()
-            scores.append(score)
-            if score > best_score:
-                best_score = score
-                best_set = pop[i]
-        scores = np.array(scores)
-        return scores, best_score, best_set
-######################################################################
     def darwin(self, pop, scores):
         """
         removes the worst elements from a population, to make space for the children
