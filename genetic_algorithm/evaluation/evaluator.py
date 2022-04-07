@@ -1,4 +1,3 @@
-import numpy as np
 from genetic_algorithm.evaluation.fitnessfuncsetter import FitnessFuncSetter
 
 
