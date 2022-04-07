@@ -10,6 +10,7 @@ class HyperParamsSetter:
         self.hyperparams_names = None
         self.hyperparams_types = None
         self.hyperparams_map = None
+        self.sequence = None
 
     def get_hyperparameters(self):
         if self.algo_type == "hyperparameter_tuning":
@@ -19,6 +20,7 @@ class HyperParamsSetter:
 
         else:
             raise ValueError("If the algo_type is not hyperparameter_tuning, you should not need this method")
+        return self
 
     def convert_hyperparams_values(self):
         self.hyperparams_map = {}
@@ -34,17 +36,33 @@ class HyperParamsSetter:
             else:
                 raise ValueError(f"The parameter: {param}, is neither categorical nor continuous, check the "
                                  f"hyperparameter types and restart")
+        self.sequence = sequence
 
         return np.array(sequence)
 
-    def _set_categorical(self, param, values):
+    def get_program_hyperparams(self):
+        i = 0
+        hyperparams = {}
+        for name in self.hyperparams_names:
+            index = self.sequence[i]
+            if self.hyperparams_types[name] == "categorical":
+                parameter = self.hyperparams_map[name][1][index]
+
+            else:
+                parameter = self.hyperparams_map[name][index]
+
+            hyperparams[name] = parameter
+            i += 1
+        return hyperparams
+
+    def _set_continuous(self, param, values):
 
         self.hyperparams_map[param] = values
         choice = random.uniform(values[0], values[1])
 
         return choice
 
-    def _set_continuous(self, param, values):
+    def _set_categorical(self, param, values):
         self.hyperparams_map[param] = [list(range(values)), values]
         choice = np.random.choice(values[0])
 
