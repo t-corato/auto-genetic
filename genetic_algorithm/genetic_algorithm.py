@@ -1,6 +1,7 @@
 import numpy as np
 from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
+from genetic_algorithm.darwinism import Darwinism
 
 
 class GeneticAlgorithm:
@@ -77,22 +78,15 @@ class GeneticAlgorithm:
 
         evaluator.evaluate_generation()
 
-################################################################################################################
-
-    def darwin(self, pop, scores):
+    def darwinism(self):
         """
         removes the worst elements from a population, to make space for the children
         """
-        scores = list(scores)
-        pop = list(pop)
-        for _ in range(int(len(pop) * self.reproduction_rate)):
-            x = scores.index(sorted(scores)[0])
-            pop.pop(x)
-            scores.pop(x)
-        pop = np.array(pop)
-        scores = np.array(scores)
-        return pop, scores
+        pop_selector = Darwinism(self.population, self.reproduction_rate)
+        self.population = pop_selector.discard_worst_performers()
 
+
+################################################################################################################
     def GA(self, pop=100, gen=20, n_factors=84):
 
         """
