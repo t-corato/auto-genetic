@@ -2,11 +2,12 @@ import numpy as np
 from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
 from genetic_algorithm.darwinism import Darwinism
+from genetic_algorithm.population_initializer.population import PopulationInitializer
 
 
 class GeneticAlgorithm:
-    def __init__(self, program, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
-                 number_gen: int = 20, hyperparams_dict=None, min_fitness_value: float = None, prob_crossover: float = 1.0,
+    def __init__(self, program, data, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
+                 number_gen: int = 20, hyperparams_dict=None, feature_num=None,  min_fitness_value: float = None, prob_crossover: float = 1.0,
                  crossover_method: str = "single_point_split", mutation_method: str = "bit_flip",
                  prob_mutation: float = 0.3, prob_translation: float = 0.1, reproduction_rate: float = 0.2,
                  selection_method: str = "roulette_wheel", tournament_size: int = 4):
@@ -35,18 +36,11 @@ class GeneticAlgorithm:
         self.test_data = None
         self.custom_fitness_function = None
         self.hyperparams_dict = hyperparams_dict
+        self.feature_num = feature_num
 
- # TODO this should be inside the population_initializer folder
     def initialize_population(self):
-        if self.algo_type == "hyperparameter_tuning":
-            pass
-        elif self.algo_type == "feature_selection":
-            pass
-        else:
-            raise ValueError('the only algo_type acceptable are "hyperparameter_tuning" and "feature_selection"'
-                             'please select one of the 2')
-
-
+        self.population = PopulationInitializer(self.pop_size, self.algo_type, hyperparams_dict=self.hyperparams_dict,
+                                                feature_num=self.feature_num).initialize_population()
 
     def reproduction(self):
 
@@ -62,7 +56,7 @@ class GeneticAlgorithm:
     def set_evaluation_method(self, evaluation_method, custom_fitness_function=None):
 
         if self.evaluation_method == "custom" and custom_fitness_function is None:
-            raise ValueError("To use a ")
+            raise ValueError("To use a custom evaluation method we need a custom fitness function")
 
         self.evaluation_method = evaluation_method
         self.custom_fitness_function = custom_fitness_function
