@@ -5,10 +5,10 @@ from genetic_algorithm.darwinism import Darwinism
 
 
 class GeneticAlgorithm:
-    def __init__(self, program, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100, number_gen: int = 20,
-                 min_fitness_value: float = None, prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
-                 mutation_method: str = "bit_flip", prob_mutation: float = 0.3,
-                 prob_translation: float = 0.1, reproduction_rate: float = 0.2,
+    def __init__(self, program, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
+                 number_gen: int = 20, hyperparams_dict=None, min_fitness_value: float = None, prob_crossover: float = 1.0,
+                 crossover_method: str = "single_point_split", mutation_method: str = "bit_flip",
+                 prob_mutation: float = 0.3, prob_translation: float = 0.1, reproduction_rate: float = 0.2,
                  selection_method: str = "roulette_wheel", tournament_size: int = 4):
 
         self.algo_type = algo_type
@@ -34,7 +34,9 @@ class GeneticAlgorithm:
         self.train_data = None
         self.test_data = None
         self.custom_fitness_function = None
+        self.hyperparams_dict = hyperparams_dict
 
+ # TODO this should be inside the population_initializer folder
     def initialize_population(self):
         if self.algo_type == "hyperparameter_tuning":
             pass
@@ -44,14 +46,7 @@ class GeneticAlgorithm:
             raise ValueError('the only algo_type acceptable are "hyperparameter_tuning" and "feature_selection"'
                              'please select one of the 2')
 
-    def get_hyperparameters(self, hyperparams_dict):
-        if self.algo_type == "hyperparameter_tuning":
-            self.hyperparams_names = hyperparams_dict[0].keys()
-            self.hyperparams_values = hyperparams_dict[1]
-            self.hyperparams_types = hyperparams_dict[0]
 
-        else:
-            raise ValueError("If the algo_type is not hyperparameter_tuning, you should not need this method")
 
     def reproduction(self):
 
@@ -87,7 +82,8 @@ class GeneticAlgorithm:
 
 
 ################################################################################################################
-    def GA(self, pop=100, gen=20, n_factors=84):
+
+    def run(self, pop=100, gen=20, n_factors=84):
 
         """
         run the genetic algorithm for n generation with m genes, storing the best score and the best gene
