@@ -24,6 +24,8 @@ class Chromosome:
         elif self.algo_type == "feature_selection":
             self._initialize_feature()
 
+        return self
+
     def set_fitness_function(self, fitness_function_initialised):
         self.fitness_function = fitness_function_initialised
 
