@@ -5,7 +5,7 @@ from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
 from genetic_algorithm.darwinism import Darwinism
 from genetic_algorithm.population_initializer.population import PopulationInitializer
-from genetic_algorithm.feature_selector import FeatureSelector
+from genetic_algorithm.evaluation.feature_selector import FeatureSelector
 from sklearn.model_selection import train_test_split
 
 
@@ -32,7 +32,7 @@ class GeneticAlgorithm:
         self.hyperparams_types = None
         self.population = None
         self.selection_method = selection_method
-        self.best_gene = None
+        self.best_chromosome = None
         self.tournament_size = tournament_size
         self.evaluation_method = None
         self.program = program
@@ -60,6 +60,21 @@ class GeneticAlgorithm:
         else:
             raise ValueError("The type of data split specified does not exist")
 
+    def set_evaluation_method(self, evaluation_method, custom_fitness_function=None):
+
+        if self.evaluation_method == "custom" and custom_fitness_function is None:
+            raise ValueError("To use a custom evaluation method we need a custom fitness function")
+
+        self.evaluation_method = evaluation_method
+        self.custom_fitness_function = custom_fitness_function
+
+    def evaluate_generation(self):
+        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.train_data, self.test_data,
+                              self.target, self.custom_fitness_function)
+
+        evaluator.evaluate_generation()
+
+    # TODO I need to put this inside the evaluation, because it's at the chromosome level
     def feature_select(self, chromosome):
         if self.algo_type == "feature_selection":
             selector_train = FeatureSelector(self.train_data)
@@ -83,60 +98,35 @@ class GeneticAlgorithm:
 
         return children
 
-    def set_evaluation_method(self, evaluation_method, custom_fitness_function=None):
-
-        if self.evaluation_method == "custom" and custom_fitness_function is None:
-            raise ValueError("To use a custom evaluation method we need a custom fitness function")
-
-        self.evaluation_method = evaluation_method
-        self.custom_fitness_function = custom_fitness_function
-
-    def evaluate_generation(self):
-        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.train_data, self.test_data,
-                              self.target, self.custom_fitness_function)
-
-        evaluator.evaluate_generation()
-
     def darwinism(self):
         """
         removes the worst elements from a population, to make space for the children
         """
+
         pop_selector = Darwinism(self.population, self.reproduction_rate)
         self.population = pop_selector.discard_worst_performers()
+        self.best_chromosome = pop_selector.best_chromosome
 
-
-################################################################################################################
-
-    def run(self, pop=100, gen=20, n_factors=84):
+    def run(self):
 
         """
         run the genetic algorithm for n generation with m genes, storing the best score and the best gene
         """
-        parents = []
-        for i in range(pop):
-            i = np.random.choice([0, 1], size=(n_factors,), p=[1. / 3, 2. / 3])
-            parents.append(i)
-        parents = np.array(parents)
+        self.initialize_population()
 
-        best_score = 0
-        best_set = []
-        scores, gen_best_score, gen_best_set = self.generation_eval(parents)
-        if gen_best_score > best_score:
-            best_score = gen_best_score
-            best_set = gen_best_set
-            print(f"Best score gen 1: {best_score}")
-        print("Finished generation: 1")
-        for i in range(gen - 1):
-            children = self.reproduction(parents, scores)
-            child_scores, gen_best_score, gen_best_set = self.generation_eval(children)
-            if gen_best_score > best_score:
-                best_score = gen_best_score
-                best_set = gen_best_set
-                print(f"Best score gen {i + 2}: {best_score}")
-            print(f"Finished generation: {i + 2}")
+        if self.evaluation_method is None:
+            raise ValueError("Remember to set the evaluation method before running the algorithm")
 
-            parents, scores = self.darwin(parents, scores)
-            parents = np.concatenate((parents, children))
-            scores = np.concatenate((scores, child_scores))
+        if self.best_chromosome.fitness > self.min_fitness_value:
 
-        return best_score, best_set
+            for i in range(self.number_gen):
+
+                self.split_data()
+                self.evaluate_generation()
+                children = self.reproduction()
+
+                self.darwinism()
+
+                self.population = self.population + children
+
+        return self.best_chromosome

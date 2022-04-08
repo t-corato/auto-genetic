@@ -21,7 +21,6 @@ class Reproduction:
         self.selection_method = selection_method
         self.tournament_size = tournament_size
 
-    # TODO CrossOver and Mutation should be defined in the __init__ and then we just call them (?)
     def crossover(self, parent_1, parent_2):
         child1, child2 = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
 
@@ -68,5 +67,5 @@ class Reproduction:
             child_1, child_2 = self.translation(child_1), self.translation(child_2)
             children.append(child_1)
             children.append(child_2)
-        children = np.array(children)
+
         return children
