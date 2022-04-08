@@ -5,7 +5,8 @@ from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
 from genetic_algorithm.darwinism import Darwinism
 from genetic_algorithm.population_initializer.population import PopulationInitializer
-from genetic_algorithm.data_processing import DataProcessor
+from genetic_algorithm.feature_selector import FeatureSelector
+from sklearn.model_selection import train_test_split
 
 
 class GeneticAlgorithm:
@@ -49,17 +50,27 @@ class GeneticAlgorithm:
         self.population = PopulationInitializer(self.pop_size, self.algo_type, hyperparams_dict=self.hyperparams_dict,
                                                 feature_num=self.feature_num).initialize_population()
 
-    def process_data(self, chromosome):
-        processor = DataProcessor(self.data, self.test_size)
-        if self.algo_type == "feature_selection":
-            sequence = chromosome.sequence
-            processor.feature_select(sequence)
-
+    def split_data(self):
         if self.data_split == "single":
-            if self.train_data and self.test_data:
-                pass
-            else:
-                self.train_data, self.test_data = processor.train_test_split()
+            if self.train_data is None and self.test_data is None:
+                self.train_data, self.test_data = train_test_split(self.data, test_size=self.test_size)
+        elif self.data_split == "multiple":
+            self.train_data, self.test_data = train_test_split(self.data, test_size=self.test_size)
+
+        else:
+            raise ValueError("The type of data split specified does not exist")
+
+    def feature_select(self, chromosome):
+        if self.algo_type == "feature_selection":
+            selector_train = FeatureSelector(self.train_data)
+            selector_test = FeatureSelector(self.test_data)
+
+            train_data, test_data = selector_train.feature_select(chromosome), selector_test.feature_select(chromosome)
+
+            return train_data, test_data
+
+        else:
+            raise ValueError("If the algo_type is not feature selection this process is not needed")
 
     def reproduction(self):
 
