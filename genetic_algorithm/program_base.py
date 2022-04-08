@@ -5,7 +5,10 @@ from abc import ABC, abstractmethod
 
 class BaseProgram(ABC):
     def __init__(self):
-        pass
+        self.hyperparams = None
+
+    def set_program_hyperparams(self, hyperparams: dict):
+        self.hyperparams = hyperparams
 
     @abstractmethod
     def run(self):

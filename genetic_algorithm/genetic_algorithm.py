@@ -1,16 +1,20 @@
 import numpy as np
+import pandas as pd
+
 from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
 from genetic_algorithm.darwinism import Darwinism
 from genetic_algorithm.population_initializer.population import PopulationInitializer
+from genetic_algorithm.data_processing import DataProcessor
 
 
 class GeneticAlgorithm:
-    def __init__(self, program, data, target_column, algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
-                 number_gen: int = 20, hyperparams_dict=None, feature_num=None,  min_fitness_value: float = None, prob_crossover: float = 1.0,
-                 crossover_method: str = "single_point_split", mutation_method: str = "bit_flip",
-                 prob_mutation: float = 0.3, prob_translation: float = 0.1, reproduction_rate: float = 0.2,
-                 selection_method: str = "roulette_wheel", tournament_size: int = 4):
+    def __init__(self, program, data: pd.DataFrame, target_column: str, test_size: float = 0.2,
+                 data_split: str = "single", algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
+                 number_gen: int = 20, hyperparams_dict=None, feature_num=None,  min_fitness_value: float = None,
+                 prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
+                 mutation_method: str = "bit_flip", prob_mutation: float = 0.3, prob_translation: float = 0.1,
+                 reproduction_rate: float = 0.2, selection_method: str = "roulette_wheel", tournament_size: int = 4):
 
         self.algo_type = algo_type
         self.pop_size = pop_size
@@ -37,10 +41,25 @@ class GeneticAlgorithm:
         self.custom_fitness_function = None
         self.hyperparams_dict = hyperparams_dict
         self.feature_num = feature_num
+        self.data = data
+        self.test_size = test_size
+        self.data_split = data_split
 
     def initialize_population(self):
         self.population = PopulationInitializer(self.pop_size, self.algo_type, hyperparams_dict=self.hyperparams_dict,
                                                 feature_num=self.feature_num).initialize_population()
+
+    def process_data(self, chromosome):
+        processor = DataProcessor(self.data, self.test_size)
+        if self.algo_type == "feature_selection":
+            sequence = chromosome.sequence
+            processor.feature_select(sequence)
+
+        if self.data_split == "single":
+            if self.train_data and self.test_data:
+                pass
+            else:
+                self.train_data, self.test_data = processor.train_test_split()
 
     def reproduction(self):
 
