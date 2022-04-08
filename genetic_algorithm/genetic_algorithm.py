@@ -69,23 +69,10 @@ class GeneticAlgorithm:
         self.custom_fitness_function = custom_fitness_function
 
     def evaluate_generation(self):
-        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.train_data, self.test_data,
-                              self.target, self.custom_fitness_function)
+        evaluator = Evaluator(self.program, self.population, self.target, self.evaluation_method, self.algo_type,
+                              self.train_data, self.test_data, self.custom_fitness_function)
 
         evaluator.evaluate_generation()
-
-    # TODO I need to put this inside the evaluation, because it's at the chromosome level
-    def feature_select(self, chromosome):
-        if self.algo_type == "feature_selection":
-            selector_train = FeatureSelector(self.train_data)
-            selector_test = FeatureSelector(self.test_data)
-
-            train_data, test_data = selector_train.feature_select(chromosome), selector_test.feature_select(chromosome)
-
-            return train_data, test_data
-
-        else:
-            raise ValueError("If the algo_type is not feature selection this process is not needed")
 
     def reproduction(self):
 
