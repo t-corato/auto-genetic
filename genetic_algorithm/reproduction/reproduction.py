@@ -3,6 +3,7 @@ from genetic_algorithm.reproduction.crossover import CrossOver
 from genetic_algorithm.reproduction.mutation import Mutation
 from genetic_algorithm.reproduction.translation import Translation
 from genetic_algorithm.reproduction.selection import Selection
+from genetic_algorithm.population_initializer.chromosomes import Chromosome
 
 
 class Reproduction:
@@ -21,12 +22,12 @@ class Reproduction:
         self.selection_method = selection_method
         self.tournament_size = tournament_size
 
-    def crossover(self, parent_1, parent_2):
+    def crossover(self, parent_1: Chromosome, parent_2: Chromosome) -> tuple[Chromosome, Chromosome]:
         child1, child2 = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
 
         return child1, child2
 
-    def mutation(self, child):
+    def mutation(self, child: Chromosome):
         """
         mutation, changing 1 into 0 and the other way around,
         to add more randomness
@@ -36,7 +37,7 @@ class Reproduction:
 
         return mutated_child
 
-    def translation(self, child):
+    def translation(self, child: Chromosome):
         """
         translate all the element of a gene by one
         """
