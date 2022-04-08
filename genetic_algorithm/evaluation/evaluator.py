@@ -15,9 +15,11 @@ class Evaluator:
         self.custom_fitness_function = custom_fitness_function
         self.algo_type = algo_type
 
-    def _set_program_hyperparams(self):
-        pass
-    # TODO add this
+    def _set_program_hyperparams(self, chromosome):
+        if chromosome.hyperparams is None:
+            raise ValueError("There is an issue with the hyperparameters of this chromosome")
+
+        self.program.set_program_hyperparams(chromosome.hyperparams)
 
     def _filter_data(self, chromosome):
         selector_train = FeatureSelector(self.train_data)
@@ -37,7 +39,7 @@ class Evaluator:
             func_setter = FitnessFuncSetter(self.evaluation_method, self.program, train_data, test_data,
                                             self.target)
         elif self.algo_type == "hyperparameter_tuning":
-            self._set_program_hyperparams()
+            self._set_program_hyperparams(chromosome)
             func_setter = FitnessFuncSetter(self.evaluation_method, self.program, self.train_data, self.test_data,
                                             self.target)
 
