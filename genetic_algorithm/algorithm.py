@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 class GeneticAlgorithm:
     def __init__(self, program, data: pd.DataFrame, target_column: str, test_size: float = 0.2,
                  data_split: str = "single", algo_type: str = "hyperparameter_tuning", pop_size: int = 100,
-                 number_gen: int = 20, hyperparams_dict=None, feature_num=None,  min_fitness_value: float = None,
+                 number_gen: int = 20, hyperparams_dict=None, feature_num=None,  max_fitness_value: float = None,
                  prob_crossover: float = 1.0, crossover_method: str = "single_point_split",
                  mutation_method: str = "bit_flip", prob_mutation: float = 0.3, prob_translation: float = 0.1,
                  reproduction_rate: float = 0.2, selection_method: str = "roulette_wheel", tournament_size: int = 4):
@@ -19,7 +19,7 @@ class GeneticAlgorithm:
         self.algo_type = algo_type
         self.pop_size = pop_size
         self.number_gen = number_gen
-        self.min_fitness_value = min_fitness_value
+        self.max_fitness_value = max_fitness_value
         self.prob_crossover = prob_crossover
         self.crossover_method = crossover_method
         self.prob_mutation = prob_mutation
@@ -113,7 +113,8 @@ class GeneticAlgorithm:
 
             self.population = self.population + children
 
-            if self.best_chromosome.fitness > self.min_fitness_value:
-                break
+            if self.max_fitness_value:
+                if self.best_chromosome.fitness > self.max_fitness_value:
+                    break
 
         return self.best_chromosome
