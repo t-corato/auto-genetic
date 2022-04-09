@@ -1,5 +1,6 @@
 from genetic_algorithm.evaluation.fitnessfuncsetter import FitnessFuncSetter
 from genetic_algorithm.evaluation.feature_selector import FeatureSelector
+from tqdm import tqdm
 
 
 class Evaluator:
@@ -53,5 +54,5 @@ class Evaluator:
         chromosome.calculate_fitness()
 
     def evaluate_generation(self):
-        for chromosome in self.population:
+        for chromosome in tqdm(self.population, miniters=10):
             self.evaluate_chromosome(chromosome)

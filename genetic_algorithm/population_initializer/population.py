@@ -10,7 +10,7 @@ class PopulationInitializer:
         self.pop_size = pop_size
 
     def initialize_population(self):
-        for _ in self.pop_size:
+        for _ in range(self.pop_size):
             chromosome = Chromosome(self.algo_type, hyperparams_dict=self.hyperparams_dict,
                                     feature_num=self.feature_num).initialize()
 

@@ -8,7 +8,8 @@ from genetic_algorithm.population_initializer.chromosomes import Chromosome
 
 class Reproduction:
     def __init__(self, population: np.array = None, crossover_method: str = "single_point_split",
-                 prob_crossover: float = 1, hyperparams_values: dict = None, prob_mutation: float = 0.3,
+                 prob_crossover: float = 1, hyperparams_types: dict = None, mutation_method: str = "bit_flip",
+                 prob_mutation: float = 0.3,
                  prob_translation: float = 0.1, selection_method: str = "roulette_wheel",
                  reproduction_rate: float = 0.2, tournament_size: int = 4):
         self.prob_crossover = prob_crossover
@@ -16,11 +17,11 @@ class Reproduction:
         self.prob_mutation = prob_mutation
         self.prob_translation = prob_translation
         self.reproduction_rate = reproduction_rate
-        self.hyperparams_values = hyperparams_values
-        self.hyperparams_types = None  # TODO find a way to use the hyperparams types when doing the crossover
+        self.hyperparams_types = hyperparams_types
         self.population = population
         self.selection_method = selection_method
         self.tournament_size = tournament_size
+        self.mutation_method = mutation_method
 
     def crossover(self, parent_1: Chromosome, parent_2: Chromosome) -> tuple[Chromosome, Chromosome]:
         child1, child2 = CrossOver(self.crossover_method).perform_crossover(parent_1=parent_1, parent_2=parent_2)
@@ -32,7 +33,7 @@ class Reproduction:
         mutation, changing 1 into 0 and the other way around,
         to add more randomness
         """
-        mutated_child = Mutation(self.crossover_method, self.hyperparams_values,
+        mutated_child = Mutation(self.mutation_method, self.hyperparams_types,
                                  self.prob_mutation).perform_mutation(child)
 
         return mutated_child

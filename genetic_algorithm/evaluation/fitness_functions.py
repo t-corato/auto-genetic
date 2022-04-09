@@ -28,7 +28,7 @@ class RMSEFitness(FitnessFunctionBase):
 
         rmse = root_mean_squared_error(error)
 
-        return rmse
+        return 1/rmse
 
 
 class MAEFitness(FitnessFunctionBase):
@@ -43,7 +43,7 @@ class MAEFitness(FitnessFunctionBase):
 
         mae = root_mean_squared_error(error)
 
-        return mae
+        return 1/mae
 
 
 class SMAPEFitness(FitnessFunctionBase):
@@ -56,7 +56,7 @@ class SMAPEFitness(FitnessFunctionBase):
 
         s_mape = symmetric_mean_average_percentage_error(self.test_data[self.target], predictions)
 
-        return s_mape
+        return 1 - s_mape
 
 
 class MAAPEFitness(FitnessFunctionBase):
@@ -69,7 +69,7 @@ class MAAPEFitness(FitnessFunctionBase):
 
         s_mape = mean_arctangent_absolute_percentage_error(self.test_data[self.target], predictions)
 
-        return s_mape
+        return 1 - s_mape
 
 
 

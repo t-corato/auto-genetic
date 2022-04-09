@@ -5,12 +5,14 @@ from copy import deepcopy
 
 
 class Mutation:
-    def __init__(self, mutation_method: str, hyperparams_values: dict, prob_mutation: float):
+    def __init__(self, mutation_method: str, hyperparams_types: dict, prob_mutation: float):
         self.mutation_method = mutation_method
-        self.hyperparams_values = hyperparams_values
         self.prob_mutation = prob_mutation
+        self.hyperparams_types = hyperparams_types
+        self.hyperparams_map = None
 
     def perform_mutation(self, gene: Chromosome) -> Chromosome:
+        self.hyperparams_map = deepcopy(gene.hyperparams_map)
         if self.mutation_method == "bit_flip":
             mutated_gene = self._bit_flip_mutation(gene)
 
@@ -48,11 +50,18 @@ class Mutation:
 
     def _random_resetting_mutation(self, gene: Chromosome) -> Chromosome:
         to_be_mutated = np.random.rand(*gene.sequence.shape) <= self.prob_mutation
-        mutation_index = np.argwhere(to_be_mutated)
+        mutation_index = np.argwhere(to_be_mutated).flatten()
         mutated_gene = deepcopy(gene)
 
         for i in mutation_index:
-            mutated_gene.sequence[i] = random.choice(self.hyperparams_values[i])
+            param = list(self.hyperparams_map.keys())[i]
+            if self.hyperparams_types[param] == "continuous":
+                choice = self._random_continuous(param)
+
+            else:
+                choice = self._random_categorical(param)
+
+            mutated_gene.sequence[i] = choice
 
         return mutated_gene
 
@@ -77,9 +86,9 @@ class Mutation:
             index_1 = random.randint(0, len(gene.sequence))
             index_2 = random.randint(index_1, len(gene.sequence))
 
-            mutated_child.sequence = np.hstack(mutated_child.sequence[:index_1],
+            mutated_child.sequence = np.hstack([mutated_child.sequence[:index_1],
                                                random.shuffle(mutated_child.sequence[index_1:index_2]),
-                                               mutated_child.sequence[index_2:])
+                                               mutated_child.sequence[index_2:]])
 
         return mutated_child
 
@@ -90,8 +99,20 @@ class Mutation:
             index_1 = random.randint(0, len(gene.sequence))
             index_2 = random.randint(index_1, len(gene.sequence))
 
-            mutated_child.sequence = np.hstack(mutated_child.sequence[:index_1],
+            mutated_child.sequence = np.hstack([mutated_child.sequence[:index_1],
                                                mutated_child.sequence[index_1:index_2][::-1],
-                                               mutated_child.sequence[index_2:])
+                                               mutated_child.sequence[index_2:]])
 
         return mutated_child
+
+    def _random_categorical(self, param):
+        values = self.hyperparams_map[param][0]
+        choice = np.random.choice(values)
+
+        return  choice
+
+    def _random_continuous(self, param):
+        values = self.hyperparams_map[param]
+        choice = random.uniform(values[0], values[1])
+
+        return choice

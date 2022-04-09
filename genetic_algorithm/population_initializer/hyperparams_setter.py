@@ -49,11 +49,11 @@ class HyperParamsSetter:
                 parameter = self.hyperparams_map[name][1][index]
 
             else:
-                parameter = self.hyperparams_map[name][index]
+                parameter = index
 
             hyperparams[name] = parameter
             i += 1
-        return hyperparams
+        return hyperparams, self.hyperparams_map
 
     def _set_continuous(self, param, values):
 
@@ -63,7 +63,8 @@ class HyperParamsSetter:
         return choice
 
     def _set_categorical(self, param, values):
-        self.hyperparams_map[param] = [list(range(values)), values]
-        choice = np.random.choice(values[0])
+        choices = list(range(len(values)))
+        self.hyperparams_map[param] = [choices, values]
+        choice = np.random.choice(choices)
 
         return choice

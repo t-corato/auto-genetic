@@ -1,11 +1,10 @@
-import numpy as np
+from tqdm import tqdm
 import pandas as pd
 
 from genetic_algorithm.reproduction.reproduction import Reproduction
 from genetic_algorithm.evaluation.evaluator import Evaluator
 from genetic_algorithm.darwinism import Darwinism
 from genetic_algorithm.population_initializer.population import PopulationInitializer
-from genetic_algorithm.evaluation.feature_selector import FeatureSelector
 from sklearn.model_selection import train_test_split
 
 
@@ -27,9 +26,10 @@ class GeneticAlgorithm:
         self.prob_translation = prob_translation
         self.reproduction_rate = reproduction_rate
         self.mutation_method = mutation_method
-        self.hyperparams_names = None
-        self.hyperparams_values = None
-        self.hyperparams_types = None
+        self.hyperparams_dict = hyperparams_dict
+        self.hyperparams_names = self.hyperparams_dict[0].keys()
+        self.hyperparams_values = self.hyperparams_dict[1]
+        self.hyperparams_types = self.hyperparams_dict[0]
         self.population = None
         self.selection_method = selection_method
         self.best_chromosome = None
@@ -40,7 +40,6 @@ class GeneticAlgorithm:
         self.train_data = None
         self.test_data = None
         self.custom_fitness_function = None
-        self.hyperparams_dict = hyperparams_dict
         self.feature_num = feature_num
         self.data = data
         self.test_size = test_size
@@ -69,7 +68,7 @@ class GeneticAlgorithm:
         self.custom_fitness_function = custom_fitness_function
 
     def evaluate_generation(self):
-        evaluator = Evaluator(self.program, self.population, self.target, self.evaluation_method, self.algo_type,
+        evaluator = Evaluator(self.program, self.population, self.evaluation_method, self.target, self.algo_type,
                               self.train_data, self.test_data, self.custom_fitness_function)
 
         evaluator.evaluate_generation()
@@ -77,7 +76,8 @@ class GeneticAlgorithm:
     def reproduction(self):
 
         rep_function = Reproduction(population=self.population, crossover_method=self.crossover_method,
-                                    prob_crossover=self.prob_crossover, hyperparams_values=self.hyperparams_values,
+                                    prob_crossover=self.prob_crossover, hyperparams_types=self.hyperparams_types,
+                                    mutation_method=self.mutation_method,
                                     prob_mutation=self.prob_mutation, prob_translation=self.prob_translation,
                                     selection_method=self.selection_method, reproduction_rate=self.reproduction_rate,
                                     tournament_size=self.tournament_size)
@@ -91,8 +91,7 @@ class GeneticAlgorithm:
         """
 
         pop_selector = Darwinism(self.population, self.reproduction_rate)
-        self.population = pop_selector.discard_worst_performers()
-        self.best_chromosome = pop_selector.best_chromosome
+        self.population, self.best_chromosome = pop_selector.discard_worst_performers()
 
     def run(self):
 
@@ -104,16 +103,17 @@ class GeneticAlgorithm:
         if self.evaluation_method is None:
             raise ValueError("Remember to set the evaluation method before running the algorithm")
 
-        if self.best_chromosome.fitness > self.min_fitness_value:
+        for _ in tqdm(range(self.number_gen)):
 
-            for i in range(self.number_gen):
+            self.split_data()
+            self.evaluate_generation()
+            children = self.reproduction()
 
-                self.split_data()
-                self.evaluate_generation()
-                children = self.reproduction()
+            self.darwinism()
 
-                self.darwinism()
+            self.population = self.population + children
 
-                self.population = self.population + children
+            if self.best_chromosome.fitness > self.min_fitness_value:
+                break
 
         return self.best_chromosome

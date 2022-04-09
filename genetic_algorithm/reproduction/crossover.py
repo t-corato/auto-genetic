@@ -37,8 +37,8 @@ class CrossOver:
             crossover_point = random.randint(0, len(parent_1.sequence))
 
             # interchanging the genes
-            child1 = np.hstack(parent_1.sequence[: crossover_point], parent_2.sequence[crossover_point:])
-            child2 = np.hstack(parent_2.sequence[: crossover_point], parent_1.sequence[crossover_point:])
+            child1 = np.hstack([parent_1.sequence[: crossover_point], parent_2.sequence[crossover_point:]])
+            child2 = np.hstack([parent_2.sequence[: crossover_point], parent_1.sequence[crossover_point:]])
 
             child_1 = deepcopy(parent_1)
             child_2 = deepcopy(parent_2)
@@ -58,10 +58,10 @@ class CrossOver:
             index_1 = random.randint(0, len(parent_1.sequence)//2)
             index_2 = random.randint(index_1, len(parent_1.sequence))
 
-            child1 = np.hstack(parent_1.sequence[: index_1], parent_2.sequence[index_1: index_2],
-                               parent_1.sequence[index_2:])
-            child2 = np.hstack(parent_2.sequence[: index_1], parent_1.sequence[index_1: index_2],
-                               parent_2.sequence[index_2:])
+            child1 = np.hstack([parent_1.sequence[: index_1], parent_2.sequence[index_1: index_2],
+                               parent_1.sequence[index_2:]])
+            child2 = np.hstack([parent_2.sequence[: index_1], parent_1.sequence[index_1: index_2],
+                               parent_2.sequence[index_2:]])
 
             child_1 = deepcopy(parent_1)
             child_2 = deepcopy(parent_2)

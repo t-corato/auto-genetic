@@ -11,5 +11,9 @@ class BaseProgram(ABC):
         self.hyperparams = hyperparams
 
     @abstractmethod
-    def run(self):
+    def run(self, train_data):
+        pass
+
+    @abstractmethod
+    def predict(self, test_data):
         pass
