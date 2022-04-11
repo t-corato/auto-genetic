@@ -27,9 +27,14 @@ class GeneticAlgorithm:
         self.reproduction_rate = reproduction_rate
         self.mutation_method = mutation_method
         self.hyperparams_dict = hyperparams_dict
-        self.hyperparams_names = self.hyperparams_dict[0].keys()
-        self.hyperparams_values = self.hyperparams_dict[1]
-        self.hyperparams_types = self.hyperparams_dict[0]
+        if self.hyperparams_dict:
+            self.hyperparams_names = self.hyperparams_dict[0].keys()
+            self.hyperparams_values = self.hyperparams_dict[1]
+            self.hyperparams_types = self.hyperparams_dict[0]
+        else:
+            self.hyperparams_names = None
+            self.hyperparams_values = None
+            self.hyperparams_types = None
         self.population = None
         self.selection_method = selection_method
         self.best_chromosome = None

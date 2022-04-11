@@ -1,7 +1,7 @@
 import pandas as pd
 
 from genetic_algorithm.algorithm import GeneticAlgorithm
-from example_program import ExampleProgram
+from example_program_hyperparam import ExampleProgram
 from genetic_algorithm.evaluation.fitness_functions import FitnessFunctionBase
 from sklearn.metrics import accuracy_score
 

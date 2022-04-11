@@ -23,8 +23,8 @@ class Evaluator:
         self.program.set_program_hyperparams(chromosome.hyperparams)
 
     def _filter_data(self, chromosome):
-        selector_train = FeatureSelector(self.train_data)
-        selector_test = FeatureSelector(self.test_data)
+        selector_train = FeatureSelector(data=self.train_data, target=self.target)
+        selector_test = FeatureSelector(data=self.test_data, target=self.target)
 
         train_data, test_data = selector_train.feature_select(chromosome), selector_test.feature_select(
             chromosome)

@@ -18,6 +18,7 @@ class Chromosome:
         self.hyperparams = None
         self.sequence = None
         self.hyperparams_map = None
+        self.features = None
 
     def initialize(self):
         if self.algo_type == "hyperparameter_tuning":
