@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from abc import ABC, abstractmethod
 
@@ -11,9 +10,9 @@ class BaseProgram(ABC):
         self.hyperparams = hyperparams
 
     @abstractmethod
-    def run(self, train_data):
+    def run(self, train_data: pd.DataFrame):
         pass
 
     @abstractmethod
-    def predict(self, test_data):
+    def predict(self, test_data: pd.DataFrame):
         pass

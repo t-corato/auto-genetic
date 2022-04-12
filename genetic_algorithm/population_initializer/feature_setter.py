@@ -1,9 +1,8 @@
-import random
 import numpy as np
 
 
 class FeatureSetter:
-    def __init__(self, algo_type, feature_num):
+    def __init__(self, algo_type: str, feature_num: int):
         self.algo_type = algo_type
         self.feature_num = feature_num
 

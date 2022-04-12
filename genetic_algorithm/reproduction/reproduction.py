@@ -57,7 +57,8 @@ class Reproduction:
 
     def reproduction(self):
         """
-        create a generation starting form the previous one, using roulette wheel selection and random choice to select the parents
+        create a generation starting form the previous one, using roulette wheel selection and random choice to select
+        the parents
         """
         parents = self.selection()
         children = []

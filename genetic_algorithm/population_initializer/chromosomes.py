@@ -6,7 +6,7 @@ class Chromosome:
     def __init__(self, algo_type, hyperparams_dict=None, feature_num=None):
         self.fitness = None
         self.fitness_function = None
-        self.algo_type=algo_type
+        self.algo_type = algo_type
         if self.algo_type == "hyperparameter_tuning" and hyperparams_dict is None:
             raise ValueError("We don't have any hyerparameters to tune!!")
 

@@ -109,7 +109,7 @@ class Mutation:
         values = self.hyperparams_map[param][0]
         choice = np.random.choice(values)
 
-        return  choice
+        return choice
 
     def _random_continuous(self, param):
         values = self.hyperparams_map[param]
