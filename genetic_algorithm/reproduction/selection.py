@@ -7,7 +7,7 @@ class Selection:
         self.selection_method = selection_method
         self.population = population
         self.reproduction_rate = reproduction_rate
-        self.n_parents = self.population * self.reproduction_rate
+        self.n_parents = len(self.population) * self.reproduction_rate
 
     def perform_selection(self, tournament_size=None):
         if self.selection_method == "roulette_wheel":

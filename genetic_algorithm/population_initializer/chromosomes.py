@@ -17,6 +17,8 @@ class Chromosome:
         self.feature_num = feature_num
         self.hyperparams = None
         self.sequence = None
+        self.hyperparams_map = None
+        self.features = None
 
     def initialize(self):
         if self.algo_type == "hyperparameter_tuning":
@@ -38,7 +40,7 @@ class Chromosome:
     def _initialize_hyperparams(self):
         setter = HyperParamsSetter(self.hyperparams_dict, self.algo_type).get_hyperparameters()
         self.sequence = setter.convert_hyperparams_values()
-        self.hyperparams = setter.get_program_hyperparams()
+        self.hyperparams, self.hyperparams_map = setter.get_program_hyperparams()
 
     def _initialize_feature(self):
         setter = FeatureSetter(self.algo_type, self.feature_num)

@@ -9,7 +9,7 @@ class FeatureSetter:
 
     def set_feature_sequence(self):
         if self.algo_type == "feature_selection":
-            sequence = np.random.randint(0, 2, size=self.feature_num)
+            sequence = np.random.choice([0, 1], size=self.feature_num, p=[0.5, 0.5])
             return sequence
 
         else:
