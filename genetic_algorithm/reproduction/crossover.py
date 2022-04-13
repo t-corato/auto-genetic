@@ -7,7 +7,7 @@ from copy import deepcopy
 # TODO handle the fact that parent and children are now classes and not np.array
 class CrossOver:
     """
-    Class for the evaluation of chromosomes
+    Class that performs the crossover on the parents to get the children
     Attributes
     ----------
     crossover_method: str
