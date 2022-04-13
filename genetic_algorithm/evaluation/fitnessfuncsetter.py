@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pandas as pd
 
 from genetic_algorithm.evaluation.fitness_functions import *
@@ -35,7 +36,7 @@ class FitnessFuncSetter:
         self.target = target
         self.fitness_func = None
 
-    def set_fitness_func(self, custom_fitness_function=None):
+    def set_fitness_func(self, custom_fitness_function=None) -> FitnessFuncSetter:
         """
         method that allows the user to pass a custom fitness function
         Parameters
@@ -45,7 +46,7 @@ class FitnessFuncSetter:
 
         Returns
         -------
-        self
+        FitnessFuncSetter
         it returns the class itself, so it can be used inline
 
         """
