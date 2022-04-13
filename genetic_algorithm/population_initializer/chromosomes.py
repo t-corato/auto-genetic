@@ -6,7 +6,6 @@ from genetic_algorithm.evaluation.fitnessfuncsetter import FitnessFuncSetter
 from typing import List
 
 
-
 class Chromosome:
     """
     Chromosome class, that contains the sequence, the hyperparameters and the fitness of its linked program run
@@ -71,7 +70,7 @@ class Chromosome:
 
         return self
 
-    def set_fitness_function(self, fitness_function_initialised: FitnessFuncSetter):
+    def set_fitness_function(self, fitness_function_initialised: FitnessFuncSetter) -> None:
         """
         method that sets the fitness function for the chromosome
         Parameters
@@ -91,7 +90,7 @@ class Chromosome:
         else:
             self.fitness = self.fitness_function.calculate_fitness()
 
-    def _initialize_hyperparams(self):
+    def _initialize_hyperparams(self) -> None:
         """
         it sets the sequence of the chromosome given the set of hyperparameters
         """
@@ -99,7 +98,7 @@ class Chromosome:
         self.sequence = setter.convert_hyperparams_values()
         self.hyperparams, self.hyperparams_map = setter.get_program_hyperparams()
 
-    def _initialize_feature(self):
+    def _initialize_feature(self) -> None:
         """
         it sets the sequence of the chromosome given the number of features
         """

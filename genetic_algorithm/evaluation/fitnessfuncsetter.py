@@ -78,10 +78,13 @@ class FitnessFuncSetter:
     def get_fitness_func(self):
         """
         method that allows the user to pass a custom fitness function
+        Returns
+        -------
+        class
+        the initialised fitness function that it's chosen
         """
         if self.fitness_func:
             return self.fitness_func
 
         else:
             raise ValueError("The fitness function has not been defined")
-
