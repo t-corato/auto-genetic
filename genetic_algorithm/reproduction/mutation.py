@@ -10,14 +10,13 @@ class Mutation:
     Attributes
     ----------
     mutation_method: str
-                      the methods that we can use to perform the crossover, it can be "single_point_split",
-                      "two_point_split" or "uniform"
+                      the methods that we can use to perform the mutation, it can be "bit_flip", "random",
+                      "swap", "scramble" or "inversion"
+    prob_mutation: float
+                    the probability that the mutation is performed
     hyperparams_types: dict
                        a dictionary that has the names of the hyperparameters as keys and the hyperparameter types as
                        values, this can either be "continuous" or "categorical"
-    prob_mutation: float
-                    the probability that the crossover is performed, by default it's equal to 1, so the crossover
-                    will always be applied
     Methods
     -------
     Private:
