@@ -20,7 +20,7 @@ class PopulationInitializer:
 
     Methods
     -------
-    self.initialize_population(): method that uses the Chromosome class to generate n (= pop_size) Chromosomes
+        self.initialize_population(): method that uses the Chromosome class to generate n (= pop_size) Chromosomes
     """
     def __init__(self, pop_size: int, algo_type: str, hyperparams_dict: list = None, feature_num: int = None) -> None:
         self.population = []
