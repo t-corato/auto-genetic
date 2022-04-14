@@ -48,7 +48,8 @@ class AccuracyFitness(FitnessFunctionBase):
 data = pd.read_csv("/Users/tommasocorato/Desktop/train.csv")
 
 genetic_algorithm = GeneticAlgorithm(program=ExampleProgram(), data=data, target_column="Survived",
-                                     hyperparams_dict=hyperparams_dict, mutation_method="random")
+                                     hyperparams_dict=hyperparams_dict, mutation_method="random",
+                                     number_gen=5, pop_size=20)
 
 genetic_algorithm.set_evaluation_method(evaluation_method="custom", custom_fitness_function=AccuracyFitness)
 
