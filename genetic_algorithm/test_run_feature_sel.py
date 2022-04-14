@@ -5,7 +5,7 @@ from example_program_feature_sel import ExampleProgramFeature
 from genetic_algorithm.evaluation.fitness_functions import FitnessFunctionBase
 from sklearn.metrics import accuracy_score
 
-features =["Pclass", "Sex", "SibSp", "Parch", "Fare", 'Embarked']
+features = ["Pclass", "Sex", "SibSp", "Parch", "Fare", 'Embarked']
 n_features = len(features)
 
 
