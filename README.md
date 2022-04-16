@@ -9,8 +9,6 @@ The main idea of the algorithm is to let the user define a program that has to b
 ## How to define a program
 The programs in this case should inherit from auto_genetic.program_base.BaseProgram that is defined as follows:
 
-'''
-
     class BaseProgram(ABC):
         """
         Abstract Base Class for the programs, any program has to inherit from this one, or have the same methods, is
@@ -37,15 +35,12 @@ The programs in this case should inherit from auto_genetic.program_base.BaseProg
             pass
 
 
-'''
-
 As we can see the class is abstract and there are 2 abstract methods that need to be implemented, run, where we run the program and pass the selected
 hyperparameters or features (according to the type of algorithm we are using) and the other is predict, where we predict the test data that will be used 
 to calculate the fitness of the chromosome.
 
 An example of what a new program for an hyperparameter tuning algorithm could look like is this, for the titanic dataset classification problem:
 
-'''
 
     class ExampleProgram(BaseProgram):
         def __init__(self):
@@ -76,6 +71,5 @@ An example of what a new program for an hyperparameter tuning algorithm could lo
             y = df["Survived"]
 
             return x, y
-'''
 
 Where the run method is doing some preprocessing via self._preprocess and then is fitting the estimator (passing the hyperparameters), while the predict method is predicting on the test data and returning the predictions 
