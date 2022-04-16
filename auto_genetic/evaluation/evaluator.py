@@ -1,6 +1,6 @@
-from genetic_algorithm.population_initializer.chromosomes import Chromosome
-from genetic_algorithm.evaluation.fitnessfuncsetter import FitnessFuncSetter
-from genetic_algorithm.evaluation.feature_selector import FeatureSelector
+from auto_genetic.population_initializer.chromosomes import Chromosome
+from auto_genetic.evaluation.fitnessfuncsetter import FitnessFuncSetter
+from auto_genetic.evaluation.feature_selector import FeatureSelector
 from tqdm import tqdm
 import pandas as pd
 

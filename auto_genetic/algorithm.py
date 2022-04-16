@@ -3,11 +3,11 @@ from typing import Iterable
 from tqdm import tqdm
 import pandas as pd
 
-from genetic_algorithm.reproduction.reproduction import Reproduction
-from genetic_algorithm.evaluation.evaluator import Evaluator
-from genetic_algorithm.darwinism import Darwinism
-from genetic_algorithm.population_initializer.chromosomes import Chromosome
-from genetic_algorithm.population_initializer.population import PopulationInitializer
+from auto_genetic.reproduction.reproduction import Reproduction
+from auto_genetic.evaluation.evaluator import Evaluator
+from auto_genetic.darwinism import Darwinism
+from auto_genetic.population_initializer.chromosomes import Chromosome
+from auto_genetic.population_initializer.population import PopulationInitializer
 from sklearn.model_selection import train_test_split
 
 

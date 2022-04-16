@@ -1,9 +1,9 @@
 import numpy as np
-from genetic_algorithm.reproduction.crossover import CrossOver
-from genetic_algorithm.reproduction.mutation import Mutation
-from genetic_algorithm.reproduction.translation import Translation
-from genetic_algorithm.reproduction.selection import Selection
-from genetic_algorithm.population_initializer.chromosomes import Chromosome
+from auto_genetic.reproduction.crossover import CrossOver
+from auto_genetic.reproduction.mutation import Mutation
+from auto_genetic.reproduction.translation import Translation
+from auto_genetic.reproduction.selection import Selection
+from auto_genetic.population_initializer.chromosomes import Chromosome
 
 
 class Reproduction:
