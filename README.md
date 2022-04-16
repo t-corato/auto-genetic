@@ -10,17 +10,9 @@ The main idea of the algorithm is to let the user define a program that has to b
 The programs in this case should inherit from auto_genetic.program_base.BaseProgram that is defined as follows:
 
 '''
+
 class BaseProgram(ABC):
-    """
-    Abstract Base Class for the programs, any program has to inherit from this one, or have the same methods, is
-    possible to add any additional method, but they need to be run inside either run or predict
-    Methods
-    -------
-    self.set_program_hyperparams(hyperparams): method that is used by each chromosome to set the hyperparameter for
-                                               the program, os it needs to be there
-    self.run(train_data): it runs the defined program, all the processes of the program have to be passed here
-    self.predict(test_data): it predicts and these predictions are used to calculate the fitness of the program
-    """
+
     def __init__(self):
         self.hyperparams = None
 
