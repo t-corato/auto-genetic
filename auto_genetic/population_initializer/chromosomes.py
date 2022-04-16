@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from genetic_algorithm.population_initializer.hyperparams_setter import HyperParamsSetter
-from genetic_algorithm.population_initializer.feature_setter import FeatureSetter
-from genetic_algorithm.evaluation.fitnessfuncsetter import FitnessFuncSetter
+from auto_genetic.population_initializer.hyperparams_setter import HyperParamsSetter
+from auto_genetic.population_initializer.feature_setter import FeatureSetter
+from auto_genetic.evaluation.fitnessfuncsetter import FitnessFuncSetter
 from typing import List
 
 

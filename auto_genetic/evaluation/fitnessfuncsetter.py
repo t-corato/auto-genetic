@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pandas as pd
 
-from genetic_algorithm.evaluation.fitness_functions import *
+from auto_genetic.evaluation.fitness_functions import *
 
 
 class FitnessFuncSetter:

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from genetic_algorithm.evaluation.metrics import *
+from auto_genetic.evaluation.metrics import *
 
 
 class FitnessFunctionBase(ABC):

@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from genetic_algorithm.population_initializer.chromosomes import Chromosome
+from auto_genetic.population_initializer.chromosomes import Chromosome
 from copy import deepcopy
 
 

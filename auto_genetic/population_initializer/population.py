@@ -1,4 +1,4 @@
-from genetic_algorithm.population_initializer.chromosomes import Chromosome
+from auto_genetic.population_initializer.chromosomes import Chromosome
 from typing import List
 
 
