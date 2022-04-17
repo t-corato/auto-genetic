@@ -72,4 +72,141 @@ An example of what a new program for an hyperparameter tuning algorithm could lo
 
             return x, y
 
-Where the run method is doing some preprocessing via self._preprocess and then is fitting the estimator (passing the hyperparameters), while the predict method is predicting on the test data and returning the predictions 
+Where the run method is doing some preprocessing via self._preprocess and then is fitting the estimator (passing the hyperparameters), while the predict method is predicting on the test data and returning the predictions.
+
+## Fitness Function
+Another thing that the user might want to define is the fitness function with which we evaluate the fitness of the chromosomes.
+The user has to define the evaluation method of the GeneticAlgorithm in the "set_evaluation_method" Method of the GeneticAlgorithm class.
+Here the user can pass a string with the choice of evaluation method that can thake the values: "rmse", "mae", "s_mape", "maape" or "custom".
+If the user chooses to define a custom fitness function then he has to define the custom_fitness_function parameter.
+
+    def set_evaluation_method(self, evaluation_method: str, custom_fitness_function=None) -> None:
+            """
+            Method that sets the fitness function for the program
+            Parameters
+            ----------
+            evaluation_method: str
+                               the string that defines the evaluation method that we want to use inside the evaluator,
+                               if it's 'custom' the user needs to define the custom_fitness_function
+            custom_fitness_function: class
+                                     if evaluation_method is custom here we have to have a custom evaluation function
+            """
+
+            if self.evaluation_method == "custom" and custom_fitness_function is None:
+                raise ValueError("To use a custom evaluation method we need a custom fitness function")
+
+            self.evaluation_method = evaluation_method
+            self.custom_fitness_function = custom_fitness_function
+            
+Here I provide an example of a custom fitness function for the ExampleProgram above, since it's a classification problem the custom fitness function will be the accuracy score
+
+    from sklearn.metrics import accuracy_score
+    
+    class AccuracyFitness(FitnessFunctionBase):
+        def __init__(self, program, train_data, test_data, target):
+            super(AccuracyFitness, self).__init__(program, train_data, test_data, target)
+
+        def calculate_fitness(self):
+            self.program.run(self.train_data)
+            predictions = self.program.predict(self.test_data)
+
+            accuracy = accuracy_score(self.test_data[self.target], predictions)
+
+            return accuracy
+        
+## Hyperparameters
+
+Then the user needs to define the hyperparameters to be chosen, by passing a list that contains 2 dictionaries to the GeneticAlgorithm class, via the hyperparams_dict parameter. 
+
+The first of the 2 dictionaries needs to define the type of hyperparameter that we are dealing with, if it's categorical or continuous. 
+Categorical means that it can take multiple set values from a list, while continuous needs to have 2 values, the minumum and maximum value in the range of the possible values for continuous parameter.
+Here is an example for the ExampleProgram defined above, with the hyperparams for the RandomForestClassifier.
+
+    hyperparam_types = {"n_estimators": "categorical",
+                        "criterion": "categorical",
+                        "max_depth": "categorical",
+                        "min_samples_split": "continuous",
+                        "min_samples_leaf": "categorical",
+                        "min_weight_fraction_leaf": "continuous",
+                        "max_features": "categorical",
+                        "max_leaf_nodes": "categorical",
+                        "min_impurity_decrease": "continuous",
+                        "oob_score": "categorical",
+                        "max_samples": "categorical"}
+                        
+The second dictionary will define the possible values for our categorical or continuous parameters. The categorical ones needs to have a list with all the possible values for the hyperparameter while the continuous one will have the max and min values.
+
+    hyperparam_values = {"n_estimators": [50, 100, 200],
+                         "criterion": ['gini', 'entropy'],
+                         "max_depth": [None, 2, 3, 5],
+                         "min_samples_split": [0.01, 0.5],
+                         "min_samples_leaf": [1, 2, 4],
+                         "min_weight_fraction_leaf": [0.0, 0.5],
+                         "max_features": ['auto', 'sqrt', 'log2'],
+                         "max_leaf_nodes": [None, 2, 3],
+                         "min_impurity_decrease": [0.0, 0.3],
+                         "oob_score": [False, True],
+                         "max_samples": [None, 100, 200]}
+
+## Run the GeneticAlgorithm
+At this point we are ready to define the GeneticAlgorithm and use it for the ExampleProgram:
+
+    import pandas as pd
+
+    from auto_genetic.algorithm import GeneticAlgorithm
+    from example_program_hyperparam import ExampleProgram
+    from auto_genetic.evaluation.fitness_functions import FitnessFunctionBase
+    from sklearn.metrics import accuracy_score
+
+    hyperparam_values = {"n_estimators": [50, 100, 200],
+                         "criterion": ['gini', 'entropy'],
+                         "max_depth": [None, 2, 3, 5],
+                         "min_samples_split": [0.01, 0.5],
+                         "min_samples_leaf": [1, 2, 4],
+                         "min_weight_fraction_leaf": [0.0, 0.5],
+                         "max_features": ['auto', 'sqrt', 'log2'],
+                         "max_leaf_nodes": [None, 2, 3],
+                         "min_impurity_decrease": [0.0, 0.3],
+                         "oob_score": [False, True],
+                         "max_samples": [None, 100, 200]}
+
+    hyperparam_types = {"n_estimators": "categorical",
+                        "criterion": "categorical",
+                        "max_depth": "categorical",
+                        "min_samples_split": "continuous",
+                        "min_samples_leaf": "categorical",
+                        "min_weight_fraction_leaf": "continuous",
+                        "max_features": "categorical",
+                        "max_leaf_nodes": "categorical",
+                        "min_impurity_decrease": "continuous",
+                        "oob_score": "categorical",
+                        "max_samples": "categorical"}
+
+    hyperparams_dict = [hyperparam_types, hyperparam_values]
+
+
+    class AccuracyFitness(FitnessFunctionBase):
+        def __init__(self, program, train_data, test_data, target):
+            super(AccuracyFitness, self).__init__(program, train_data, test_data, target)
+
+        def calculate_fitness(self):
+            self.program.run(self.train_data)
+            predictions = self.program.predict(self.test_data)
+
+            accuracy = accuracy_score(self.test_data[self.target], predictions)
+
+            return accuracy
+
+
+    data = pd.read_csv("./train.csv") # the data of the titanic dataset
+
+    genetic_algorithm = GeneticAlgorithm(program=ExampleProgram(), data=data, target_column="Survived",
+                                         hyperparams_dict=hyperparams_dict, mutation_method="random",
+                                         number_gen=5, pop_size=20)
+
+    genetic_algorithm.set_evaluation_method(evaluation_method="custom", custom_fitness_function=AccuracyFitness)
+
+    best_chromosome = genetic_algorithm.run()
+    
+The outputted best chromosome will have an .fitness attribute that contain the fitness and a .hyperparams attribute that contains the set of hyperparams that lead to the best fitness. 
+
