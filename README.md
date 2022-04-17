@@ -113,6 +113,8 @@ Here I provide an example of a custom fitness function for the ExampleProgram ab
             accuracy = accuracy_score(self.test_data[self.target], predictions)
 
             return accuracy
+            
+ ### IMPORTANT: THE ALGORITHM ALWAYS MAXIMISES THE FITNESS FUNCTION, so if you want to minimize you might want to return the negative of the fitness function
         
 ## Hyperparameters
 
@@ -202,7 +204,12 @@ At this point we are ready to define the GeneticAlgorithm and use it for the Exa
 
     genetic_algorithm = GeneticAlgorithm(program=ExampleProgram(), data=data, target_column="Survived",
                                          hyperparams_dict=hyperparams_dict, mutation_method="random",
-                                         number_gen=5, pop_size=20)
+                                         number_gen=5, pop_size=20, test_size=0.2,
+                                         data_split="single", algo_type="hyperparameter_tuning", feature_num=None,
+                                         max_fitness_value=None, prob_crossover=1.0, crossover_method="single_point_split",
+                                         prob_mutation=0.3, prob_translation=0.1, reproduction_rate=0.2, 
+                                         selection_method="roulette_wheel", tournament_size=4)
+                                         
 
     genetic_algorithm.set_evaluation_method(evaluation_method="custom", custom_fitness_function=AccuracyFitness)
 
@@ -210,3 +217,5 @@ At this point we are ready to define the GeneticAlgorithm and use it for the Exa
     
 The outputted best chromosome will have an .fitness attribute that contain the fitness and a .hyperparams attribute that contains the set of hyperparams that lead to the best fitness. 
 
+This example program is defined with an Sklearn program but the GeneticAlgorithm is best served by using a more complex custom program, since sklearn 
+already has many programs that can optimize the hyperparams in a less Stochastic way.
